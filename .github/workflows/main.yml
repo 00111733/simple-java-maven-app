@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# 触发条件：main分支有push或PR时自动运行
 on:
   push:
     branches: [ main ]
@@ -10,12 +9,13 @@ on:
 jobs:
   build-test-package:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./simple-java-maven-app
     steps:
-      # 1. 拉取仓库代码
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. 配置JDK 21环境（和作业要求一致）
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -23,18 +23,14 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. 编译项目（Build步骤）
       - name: Build with Maven
         run: mvn compile
 
-      # 4. Checkstyle代码规范检查
       - name: Run Checkstyle
         run: mvn checkstyle:checkstyle
 
-      # 5. 运行JUnit单元测试（Test步骤）
       - name: Run Tests
         run: mvn test
 
-      # 6. 打包项目（Package步骤）
       - name: Package Project
         run: mvn package
