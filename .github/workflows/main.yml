@@ -2,16 +2,16 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-test-package:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./simple-java-maven-app
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,16 +21,12 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: maven
 
       - name: Build with Maven
-        run: mvn compile
+        run: mvn clean install
 
-      - name: Run Checkstyle
-        run: mvn checkstyle:checkstyle
-
-      - name: Run Tests
+      - name: Run tests
         run: mvn test
 
-      - name: Package Project
+      - name: Package application
         run: mvn package
